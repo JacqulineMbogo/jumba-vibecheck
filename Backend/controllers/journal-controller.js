@@ -78,12 +78,9 @@ const DUMMY_JOURNAL = [
     const timestamp = new Date().toISOString();
   
     const createdJournal = {
-      id: uuidv4().toString(),
       title,
       description,
       user_id,
-      create_date: timestamp,
-      update_date: timestamp,
       status: "active" //by default status is active
     };
   
