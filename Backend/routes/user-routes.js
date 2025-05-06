@@ -2,12 +2,13 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const usersController = require('../controllers/user-controller');
+const User = require('../models/user');
 
 const router = express.Router();
 
 router.post('/signup',
     [
-        check('name')
+        check('username')
           .not()
           .isEmpty(),
         check('email')

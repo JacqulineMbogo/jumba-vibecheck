@@ -5,69 +5,44 @@ const HttpError = require('../models/http-error');
 const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
+const Journal = require('../models/journal');
 
-const DUMMY_JOURNAL = [
-    {
-      id: 'j1',
-      title: 'Empire State Building',
-      description: 'One of the most famous skyscrapers in the world!',
-      user_id: 'u1',
-      create_date: '2023-10-01',
-      update_date: '2023-10-02',
-      status: 'active',
-    },
-    {
-      id: 'j2',
-      title: 'VibeCheck Launch',
-      description: 'Shared my first vibe today 😎',
-      user_id: 'u1',
-      create_date: '2023-10-01',
-      update_date: '2023-10-02',
-      status: 'active',
-    },
-    {
-        id: 'j3',
-        title: 'Empire State Building2',
-        description: 'One of the most famous skyscrapers in the world!',
-        user_id: 'u2',
-        create_date: '2023-10-01',
-        update_date: '2023-10-02',
-        status: 'active',
-      },
-      {
-        id: 'j4',
-        title: 'VibeCheck Launch2',
-        description: 'Shared my first vibe today 😎',
-        user_id: 'u2',
-        create_date: '2023-10-01',
-        update_date: '2023-10-02',
-        status: 'active',
-      }
-  ];
-
-  const getJournalById = (req, res, next) => {
+  const getJournalById = async (req, res, next) => {
     const journalId = req.params.jid;
-    const journal = DUMMY_JOURNAL.find(j => j.id === journalId);
-  
-    if (!journal) {
-      return next(new HttpError('Could not find a journal for the provided ID.', 404));
+
+    try {
+      const journal = await Journal.findById(journalId);
+      if (!journal) {
+        return next(new HttpError('Could not find a journal for the provided ID.', 404));
+      }
+      res.json({ journal });
+    }
+    catch (err) {
+      console.error(err);
+      return next(new HttpError('Fetching journal failed, please try again later.', 500));
     }
   
-    res.json({ journal });
+    res.json({ journal: journal.toObject({ getters: true }) });
   };
   
-  const getJournalsByUserId = (req, res, next) => {
+  const getJournalsByUserId = async (req, res, next) => {
     const userId = req.params.uid;
-    const journals = DUMMY_JOURNAL.filter(j => j.user_id === userId);
-  
-    if (!journals || journals.length === 0) {
-      return next(new HttpError('Could not find any journals for the provided user.', 404));
+    try {
+      const journals = await Journal.find({ user_id: userId });
+      if (!journals || journals.length === 0) {
+        return next(new HttpError('Could not find any journals for the provided user.', 404));
+      }
+      res.json({ journals });
+    }
+    catch (err) {
+      console.error(err);
+      return next(new HttpError('Fetching journals failed, please try again later.', 500));
     }
   
-    res.json({ journals });
+    res.json({ journals: journals.map(journal => journal.toObject({ getters: true })) });
   };
 
-  const createJournal = (req, res, next) => {
+  const createJournal = async (req, res, next) => {
     const errors = validationResult(req);
       if (!errors.isEmpty()) {
         throw new HttpError('Invalid inputs passed, please check your data.', 422);
@@ -77,18 +52,28 @@ const DUMMY_JOURNAL = [
   
     const timestamp = new Date().toISOString();
   
-    const createdJournal = {
+    const createdJournal = new Journal({
       title,
       description,
       user_id,
-      status: "active" //by default status is active
-    };
+      create_date: timestamp,
+      update_date: timestamp,
+      status: 'active'
+    });
+    
   
-    DUMMY_JOURNAL.push(createdJournal);
+    await createdJournal.save()
+      .then(() => {
+        res.status(201).json({ journal: createdJournal });
+      })
+      .catch(err => {
+        console.error(err);
+        return next(new HttpError('Creating journal failed, please try again.', 500));
+      });
     res.status(201).json({ journal: createdJournal });
   };
 
-    const updateJournal = (req, res, next) => {
+    const updateJournal = async (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         throw new HttpError('Invalid inputs passed, please check your data.', 422);
@@ -96,34 +81,56 @@ const DUMMY_JOURNAL = [
         const journalId = req.params.jid;
         const { title, description, status } = req.body;
         
-        const journalIndex = DUMMY_JOURNAL.findIndex(j => j.id === journalId);
-        
-        if (journalIndex === -1) {
-            return next(new HttpError('Could not find a journal for the provided ID.', 404));
+        let journal;
+        try {
+            journal = await Journal.findById(journalId);
+        } catch (err) {
+            const error = new HttpError('Something went wrong, could not update journal.', 500);
+            return next(error);
         }
+        if (!journal) {
+            const error = new HttpError('Could not find journal for the provided id.', 404);
+            return next(error);
+        }
+        journal.title = title;
+        journal.description = description;
+        journal.update_date = new Date().toISOString();
         
-        const updatedJournal = {
-            ...DUMMY_JOURNAL[journalIndex],
-            title,
-            description,
-            status,
-            update_date: new Date().toISOString()
-        };
-        
-        DUMMY_JOURNAL[journalIndex] = updatedJournal;
+        try {
+            await journal.save();
+        } catch (err) {
+            const error = new HttpError('Something went wrong, could not update journal.', 500);
+            return next(error);
+        }
+        const updatedJournal = journal.toObject({ getters: true });
+
         res.status(200).json({ journal: updatedJournal });
         };
 
-        const deleteJournal = (req, res, next) => {
+        const deleteJournal = async (req, res, next) => {
             const journalId = req.params.jid;
-            const journalIndex = DUMMY_JOURNAL.findIndex(j => j.id === journalId);
-            
-            if (journalIndex === -1) {
-                return next(new HttpError('Could not find a journal for the provided ID.', 404));
+            let journal;
+            try {
+                journal = await Journal.findById(journalId);
+            } catch (err) {
+                const error = new HttpError('Something went wrong, could not find journal.', 500);
+                return next(error);
             }
+            if (!journal) {
+                const error = new HttpError('Could not find journal for the provided id.', 404);
+                return next(error);
+            }
+  
+            try {
+                await journal.remove();
+            }
+            catch (err) {
+                const error = new HttpError('Something went wrong, could not delete journal.', 500);
+                return next(error);
+            }
+
             
-            DUMMY_JOURNAL.splice(journalIndex, 1);
-            res.status(200).json({ message: 'Journal deleted.' });
+            res.status(200).json({ message: 'Deleted journal.' });
         };
 
 
