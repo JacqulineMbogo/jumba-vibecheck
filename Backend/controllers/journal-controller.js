@@ -4,8 +4,9 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../models/http-error');
 const { v4: uuidv4 } = require('uuid');
 
-const router = express.Router();
 const Journal = require('../models/journal');
+const User = require('../models/user');
+
 
   const getJournalById = async (req, res, next) => {
     const journalId = req.params.jid;
@@ -61,6 +62,18 @@ const Journal = require('../models/journal');
       status: 'active'
     });
     
+    let user;
+
+    try {
+      user = await User.findById(user_id);
+      if (!user) {
+        return next(new HttpError('Could not find user for provided id.', 404));
+      }
+    }
+    catch (err) {
+      console.error(err);
+      return next(new HttpError('Creating journal failed, please try again.', 500));
+    }
   
     await createdJournal.save()
       .then(() => {
