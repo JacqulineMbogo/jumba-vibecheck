@@ -29,7 +29,12 @@ const shareRecentJournals = async () => {
 
   // Group journals by userId
   const journalsByUser = recentJournals.reduce((acc, journal) => {
+    if (!journal.user_id || typeof journal.user_id.toString !== 'function') {
+      console.warn('Skipped journal without user_id:', journal);
+      return acc;
+    }
     const uid = journal.user_id.toString();
+
     if (!uid) {
       console.warn('Skipped journal without user_id:', journal);
       return acc;
@@ -80,3 +85,5 @@ cron.schedule('0 12 * * *', async () => {
 //     console.error('Error sharing journals:', err);
 //   }
 // });
+
+module.exports = { shareRecentJournals };

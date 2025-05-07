@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 
 const journalsRoutes = require('./routes/journal-routes');
 const usersRoutes = require('./routes/user-routes');
@@ -37,21 +36,4 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
-mongoose
-  .connect(
-    'mongodb+srv://admin:admin@sandbox.0n9cihx.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox'
-  )
-  .then(() => {
-    app.listen(5001);
-    console.log('Connected to Database');
-  })
-  .catch((err) => {
-    console.log(err);
-    console.log('Connection to Database Failed');
-  });
-
-// Import cron jobs
-require('./cron/emailShareJob');
-
-// Load environment variables
-require('dotenv').config();
+module.exports = app;
