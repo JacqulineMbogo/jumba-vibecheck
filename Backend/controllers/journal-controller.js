@@ -31,7 +31,7 @@ const User = require('../models/user');
     try {
       const journals = await Journal.find({ user_id: userId });
       if (!journals || journals.length === 0) {
-        return next(new HttpError('Could not find any journals for the provided user.', 404));
+        return next(new HttpError('Could not find any journals for the user.', 404));
       }
       res.json({ journals });
     }
@@ -121,30 +121,20 @@ const User = require('../models/user');
         };
 
         const deleteJournal = async (req, res, next) => {
-            const journalId = req.params.jid;
-            let journal;
-            try {
-                journal = await Journal.findById(journalId);
-            } catch (err) {
-                const error = new HttpError('Something went wrong, could not find journal.', 500);
-                return next(error);
-            }
+          const journalId = req.params.jid;
+        
+          try {
+            const journal = await Journal.findById(journalId);
             if (!journal) {
-                const error = new HttpError('Could not find journal for the provided id.', 404);
-                return next(error);
+              return next(new HttpError('Could not find journal for the provided id.', 404));
             }
-  
-            try {
-                await journal.remove();
-            }
-            catch (err) {
-                const error = new HttpError('Something went wrong, could not delete journal.', 500);
-                return next(error);
-            }
-
-            
+        
+            await Journal.findByIdAndDelete(journalId);
             res.status(200).json({ message: 'Deleted journal.' });
-        };
+          } catch (err) {
+            return next(new HttpError('Something went wrong, could not delete journal.', 500));
+          }
+        };        
 
 
 
