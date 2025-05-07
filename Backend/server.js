@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 
 const app = require('./app');
 
+console.log('Connecting to DB:', process.env.DB_CONNECTION_STRING);
+
 mongoose
   .connect(`${process.env.DB_CONNECTION_STRING}`)
   .then(() => {
