@@ -4,9 +4,7 @@ const mongoose = require('mongoose');
 const app = require('./app');
 
 mongoose
-  .connect(
-    'mongodb+srv://admin:admin@sandbox.0n9cihx.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox'
-  )
+  .connect(`${process.env.DB_CONNECTION_STRING}`)
   .then(() => {
     app.listen(5001, () => console.log('Server running on port 5001'));
   })

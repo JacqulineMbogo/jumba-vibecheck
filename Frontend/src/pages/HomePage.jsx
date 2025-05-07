@@ -36,7 +36,7 @@ const HomePage = () => {
     if (!auth?.token) return;
 
     try {
-      const response = await fetch('http://localhost:5001/api/journals', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/journals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const HomePage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5001/api/journals/${journalId}`,
+        `${import.meta.env.VITE_API_URL}/journals/${journalId}`,
         {
           method: 'DELETE',
           headers: {

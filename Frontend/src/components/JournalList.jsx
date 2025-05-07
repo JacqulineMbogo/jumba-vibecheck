@@ -30,7 +30,7 @@ const JournalList = ({ userId, token, onEdit, onDelete }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5001/api/journals/user/${userId}`,
+        `${import.meta.env.VITE_API_URL}/journals/user/${userId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ const JournalList = ({ userId, token, onEdit, onDelete }) => {
         description: values.description,
       };
       const response = await fetch(
-        `http://localhost:5001/api/journals/${currentJournal._id}`,
+        `${import.meta.env.VITE_API_URL}/journals/${currentJournal._id}`,
         {
           method: 'PATCH',
           headers: {
