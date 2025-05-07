@@ -37,6 +37,11 @@ VibeCheck is a mood journaling application that helps users track, manage, and r
 
 ---
 
+## 🛠 Architectural Diagram
+
+<img width="851" alt="Screenshot 2025-05-08 at 02 28 00" src="https://github.com/user-attachments/assets/dd2c0b20-6a93-456a-b4df-ef0c84dfd407" />
+
+
 ## 🌐 Deployment
 
 ### Frontend (Firebase Hosting)
