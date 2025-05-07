@@ -1,6 +1,6 @@
 {
   "env": {
-    "DB_CONNECTION_STRING": "mongodb+srv://${process}:admin@sandbox.0n9cihx.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox",
+    "DB_CONNECTION_STRING": "mongodb+srv://admin:admin@sandbox.0n9cihx.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox",
     "JWT_KEY": "your_jwt_secret_here"
   }
 }
