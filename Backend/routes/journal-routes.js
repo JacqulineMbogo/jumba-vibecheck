@@ -2,8 +2,12 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const journalControllers = require('../controllers/journal-controller');
+const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
+
+// Middleware to authenticate user
+router.use(checkAuth);
 
 // GET all journals by UserId
 router.get('/user/:uid', journalControllers.getJournalsByUserId);
