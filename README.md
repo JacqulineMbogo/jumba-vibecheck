@@ -1,9 +1,3 @@
-# jumba-vibecheck
-
-Great! Here's a **well-structured `README.md`** for your project, based on the setup you've described — Vite frontend + Express/MongoDB backend deployed on Firebase and Heroku:
-
----
-
 # VibeCheck — Mood Journal Web App
 
 VibeCheck is a mood journaling application that helps users track, manage, and reflect on their emotions through personal entries. This full-stack web app is built using modern JavaScript technologies with a clean frontend/backend separation.
