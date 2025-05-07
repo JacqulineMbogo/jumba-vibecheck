@@ -9,6 +9,14 @@ const HttpError = require('./models/http-error');
 const app = express();
 app.use(express.json());
 
+//apply cors middleware
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    next();
+  });
+
 app.use('/api/journals',journalsRoutes);
 app.use('/api/users', usersRoutes);
 
