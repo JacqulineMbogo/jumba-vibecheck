@@ -115,7 +115,7 @@ const login = async (req, res, next) => {
   try {
     token = jwt.sign(
       { userId: existingUser.id, email: existingUser.email },
-      'your_jwt_secret_here', // Replace with your secure secret
+      'your_jwt_secret_here',
       { expiresIn: '1h' }
     );
   } catch (err) {

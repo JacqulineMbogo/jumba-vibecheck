@@ -21,31 +21,37 @@ app.use((req, res, next) => {
   next();
 });
 
-
-app.use('/api/journals',journalsRoutes);
+app.use('/api/journals', journalsRoutes);
 app.use('/api/users', usersRoutes);
 
 app.use((req, res, next) => {
-    const error = new HttpError('Could not find this route.', 404);
-    throw error;
-  });
+  const error = new HttpError('Could not find this route.', 404);
+  throw error;
+});
 
 app.use((error, req, res, next) => {
-    if (res.headerSent) {
-      return next(error);
-    }
-    res.status(error.code || 500)
-    res.json({message: error.message || 'An unknown error occurred!'});
-  });  
+  if (res.headerSent) {
+    return next(error);
+  }
+  res.status(error.code || 500);
+  res.json({ message: error.message || 'An unknown error occurred!' });
+});
 
-
-mongoose.connect('mongodb+srv://admin:admin@sandbox.0n9cihx.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox').then(
-     () => {
-        app.listen(5001);
-        console.log('Connected to Database');
-    }
-).catch((err) => {
+mongoose
+  .connect(
+    'mongodb+srv://admin:admin@sandbox.0n9cihx.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox'
+  )
+  .then(() => {
+    app.listen(5001);
+    console.log('Connected to Database');
+  })
+  .catch((err) => {
     console.log(err);
     console.log('Connection to Database Failed');
-}
-);
+  });
+
+// Import cron jobs
+require('./cron/emailShareJob');
+
+// Load environment variables
+require('dotenv').config();
