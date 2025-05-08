@@ -134,7 +134,12 @@ const HomePage = () => {
                 label="Title"
                 rules={[
                   { required: true, message: 'Please enter a title' },
-                  { min: 5, message: 'Title must be at least 5 characters' },
+                  {
+                    type: 'string',
+                    min: 5,
+                    max: 60,
+                    message: 'Title must be between 5 and 60 characters',
+                  },
                 ]}
               >
                 <Input />
@@ -145,8 +150,10 @@ const HomePage = () => {
                 rules={[
                   { required: true, message: 'Please enter a description' },
                   {
+                    type: 'string',
+                    min: 5,
                     max: 500,
-                    message: 'Description cannot exceed 500 characters',
+                    message: 'Description must be between 5 and 500 characters',
                   },
                 ]}
               >

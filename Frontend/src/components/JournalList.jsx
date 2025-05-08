@@ -163,14 +163,14 @@ const JournalList = ({ userId, token, onEdit, onDelete }) => {
             <Form.Item
               name="title"
               label="Title"
-              rules={[{ required: true, min: 5 }]}
+              rules={[{ required: true, min: 5, max: 60 }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="description"
               label="Description"
-              rules={[{ required: true, max: 500 }]}
+              rules={[{ required: true, min: 5, max: 500 }]}
             >
               <Input.TextArea rows={4} />
             </Form.Item>
