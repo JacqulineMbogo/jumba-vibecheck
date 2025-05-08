@@ -151,9 +151,10 @@ const HomePage = () => {
                   { required: true, message: 'Please enter a description' },
                   {
                     type: 'string',
-                    min: 5,
+                    min: 10,
                     max: 500,
-                    message: 'Description must be between 5 and 500 characters',
+                    message:
+                      'Description must be between 10 and 500 characters',
                   },
                 ]}
               >
