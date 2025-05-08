@@ -36,7 +36,7 @@ VibeCheck is a mood journaling application that helps users track, manage, and r
 - **ORM:** Mongoose
 - **Security:** JWT authentication
 - **Scheduled Tasks:** Node-cron (e.g. email reminders)
-- - **Deployment:** Jest
+- **Tests:** Jest
 - **Deployment:** Heroku
 
 ---
